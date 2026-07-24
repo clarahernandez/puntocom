@@ -53,56 +53,5 @@
 
 <body>
 
-<!-- ENTRADA -->
-<div id="entrada">
-  <div id="titulo">ENTRAR</div>
-  <div id="sub">tocar para empezar</div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-
-<script>
-let activo = true;
-
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  background(0);
-}
-
-function draw() {
-  if (!activo) return;
-
-  noStroke();
-  fill(180, 220, 255, 20);
-
-  // movimiento orgánico suave
-  let x = mouseX + random(-10, 10);
-  let y = mouseY + random(-10, 10);
-
-  circle(x, y, random(10, 60));
-}
-
-// activar instalación
-document.getElementById("entrada").addEventListener("click", () => {
-  document.getElementById("entrada").style.display = "none";
-  activo = true;
-  background(0);
-});
-
-//desactivar instalación
-document.addEventListener('click', () => {
-    if(activo) {
-	activo = false
-	} else {
-	activo = true
-}
-});
-
-// resize
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
-</script>
-
 </body>
 </html>
