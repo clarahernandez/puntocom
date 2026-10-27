@@ -4,271 +4,98 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>cla.ar</title>
-<meta name="description" content="Hay algo corriendo acá." />
 <link rel="icon" type="image/x-icon" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --fg: #b8c4bd;
-    --dim: #5b6761;
-    --accent: #7dffb2;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --fg: #d3d7cf;
+    --dim: #6b7570;
+    --verde: #8ae234;
+    --azul: #729fcf;
+    font-family: "Ubuntu Mono", "DejaVu Sans Mono", Consolas, monospace;
   }
 
   * { box-sizing: border-box; }
 
-  body {
+  html, body {
     margin: 0;
-    min-height: 100vh;
-    background: black;
-    color: var(--fg);
-    overflow: hidden;
-  }
-
-  canvas#lluvia {
-    position: fixed;
-    inset: 0;
-    width: 100%;
     height: 100%;
-    opacity: 0.35;
+    background: #050805;
+    color: var(--fg);
   }
 
-  /* Pantalla de entrada */
-  #entrada {
-    position: fixed;
-    inset: 0;
+  main {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    background: radial-gradient(circle at center, #0a0a0a, #000);
-    z-index: 10;
-    cursor: pointer;
-    transition: opacity 1.2s ease;
-  }
-  #entrada.fuera { opacity: 0; pointer-events: none; }
-
-  #titulo {
-    font-size: 18px;
-    letter-spacing: 4px;
-    opacity: 0.8;
-  }
-  #sub {
-    font-size: 12px;
-    opacity: 0.4;
-    margin-top: 10px;
-    animation: latido 3s ease-in-out infinite;
-  }
-  @keyframes latido { 50% { opacity: 0.1; } }
-
-  /* Terminal */
-  main {
-    position: relative;
-    z-index: 2;
-    max-width: 720px;
+    padding: 24px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: 12vh 24px 40px;
-    height: 100vh;
-    overflow-y: auto;
-    font-size: 14px;
-    line-height: 1.7;
-    scrollbar-width: none;
+    font-size: 20px;
+    line-height: 1.6;
   }
-  main::-webkit-scrollbar { display: none; }
 
-  .linea { white-space: pre-wrap; word-break: break-word; }
-  .dim { color: var(--dim); }
-  .ok { color: var(--accent); }
+  .prompt .usr { color: var(--verde); font-weight: 700; }
+  .prompt .dir { color: var(--azul); font-weight: 700; }
 
-  /* texto tachado que se revela al pasar el mouse */
-  .oculto {
-    background: var(--fg);
-    color: transparent;
-    border-radius: 2px;
-    cursor: help;
-    transition: background 0.6s ease, color 0.6s ease;
+  h1 {
+    margin: 4px 0 20px;
+    font-size: clamp(40px, 10vw, 84px);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
   }
-  .oculto:hover, .oculto:focus {
-    background: transparent;
-    color: var(--accent);
+
+  .botones { display: flex; flex-wrap: wrap; gap: 12px; margin: 4px 0 20px; }
+
+  a.boton {
+    color: var(--verde);
+    border: 1px solid var(--verde);
+    padding: 4px 14px;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  a.boton:hover, a.boton:focus-visible {
+    background: var(--verde);
+    color: #050805;
     outline: none;
   }
 
-  #prompt-fila { display: flex; gap: 8px; margin-top: 4px; }
-  #prompt-fila span { color: var(--accent); }
-  #cmd {
-    flex: 1;
-    background: none;
-    border: 0;
-    outline: 0;
-    color: var(--fg);
-    font: inherit;
-    caret-color: var(--accent);
+  .cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    background: var(--fg);
+    vertical-align: text-bottom;
+    animation: parpadeo 1.1s steps(1) infinite;
   }
-
-  /* glitch ocasional en el título */
-  .glitch { animation: glitch 0.25s steps(2) 1; }
-  @keyframes glitch {
-    0%   { transform: translate(0); text-shadow: none; }
-    30%  { transform: translate(-2px, 1px); text-shadow: 2px 0 #f0f, -2px 0 #0ff; }
-    60%  { transform: translate(2px, -1px); text-shadow: -2px 0 #f0f, 2px 0 #0ff; }
-    100% { transform: translate(0); text-shadow: none; }
-  }
+  @keyframes parpadeo { 50% { opacity: 0; } }
 
   @media (prefers-reduced-motion: reduce) {
-    #sub, .glitch { animation: none; }
+    .cursor { animation: none; }
   }
 </style>
 </head>
 
 <body>
 
-<div id="entrada">
-  <div id="titulo">CLA.AR</div>
-  <div id="sub">click para entrar</div>
-</div>
+<main>
+  <div class="prompt"><span class="usr">invitado@cla.ar</span>:<span class="dir">~</span>$ whoami</div>
+  <h1>CLA.AR</h1>
 
-<canvas id="lluvia" aria-hidden="true"></canvas>
+  <div class="prompt"><span class="usr">invitado@cla.ar</span>:<span class="dir">~</span>$ ./contacto</div>
+  <div class="botones">
+    <a class="boton" href="mailto:hola@cla.ar">hola@cla.ar</a>
+  </div>
 
-<main id="term" aria-live="polite"></main>
-
-<script>
-  const entrada = document.getElementById("entrada");
-  const term = document.getElementById("term");
-  const reducir = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---------- lluvia de símbolos ---------- */
-  const canvas = document.getElementById("lluvia");
-  const ctx = canvas.getContext("2d");
-  const glifos = "01{}[]<>/\\;=+*#$%&ヲァィゥェォャュョ";
-  let cols = [], tam = 16;
-
-  function ajustar() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-    cols = Array(Math.ceil(innerWidth / tam)).fill(0).map(() => Math.random() * -50);
-  }
-  addEventListener("resize", ajustar);
-  ajustar();
-
-  function lluvia() {
-    ctx.fillStyle = "rgba(0,0,0,0.08)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#2f8f5b";
-    ctx.font = tam + "px monospace";
-    cols.forEach((y, i) => {
-      const g = glifos[(Math.random() * glifos.length) | 0];
-      ctx.fillText(g, i * tam, y * tam);
-      cols[i] = y * tam > canvas.height && Math.random() > 0.975 ? 0 : y + 0.5;
-    });
-  }
-  if (!reducir) setInterval(lluvia, 70);
-
-  /* ---------- guion ---------- */
-  const guion = [
-    ["dim", "> conexión establecida"],
-    ["dim", "> origen: [desconocido]"],
-    ["", ""],
-    ["", "Hola."],
-    ["", "No deberías estar acá. O sí."],
-    ["", ""],
-    ["", "Escribo código. Rompo cosas para entender cómo funcionan."],
-    ["", "Algunas las vuelvo a armar. <span class='oculto' tabindex='0'>Otras mejor no.</span>"],
-    ["", ""],
-    ["", "Ahora mismo hay <span class='oculto' tabindex='0'>tres procesos</span> corriendo en esta página."],
-    ["", "Ninguno es visible."],
-    ["", ""],
-    ["ok", "escribí 'help' si querés seguir."],
-  ];
-
-  const sleep = ms => new Promise(r => setTimeout(r, reducir ? 0 : ms));
-
-  function agregar(clase, html) {
-    const d = document.createElement("div");
-    d.className = "linea " + clase;
-    d.innerHTML = html;
-    term.insertBefore(d, filaPrompt);
-    term.scrollTop = term.scrollHeight;
-    return d;
-  }
-
-  async function tipear(clase, html) {
-    const d = agregar(clase, "");
-    if (reducir || html.includes("<")) { d.innerHTML = html; return; }
-    for (const c of html) { d.textContent += c; await sleep(22); }
-  }
-
-  /* ---------- prompt ---------- */
-  const filaPrompt = document.createElement("div");
-  filaPrompt.id = "prompt-fila";
-  filaPrompt.hidden = true;
-  filaPrompt.innerHTML = "<span>›</span><input id='cmd' autocomplete='off' spellcheck='false' aria-label='comando' />";
-  term.appendChild(filaPrompt);
-  const cmd = filaPrompt.querySelector("input");
-
-  const comandos = {
-    help: () => ["Comandos: whoami, ls, cat <archivo>, contacto, clear", "Hay otros. No figuran."],
-    whoami: () => ["alguien que escribe código a deshoras."],
-    ls: () => ["notas.txt   llave.pem   <span class='oculto' tabindex='0'>.no_abrir</span>   proyectos/"],
-    contacto: () => ["Las señales no se envían. Se interceptan.", "(pero si insistís: hola@cla.ar)"],
-    clear: () => { [...term.querySelectorAll(".linea")].forEach(n => n.remove()); return []; },
-    sudo: () => ["buen intento."],
-    exit: () => ["no hay salida."],
-  };
-  const archivos = {
-    "notas.txt": ["día 41: el patrón se repite cada 7 commits.", "día 42: dejé de dormir. vale la pena.", "día 43: <span class='oculto' tabindex='0'>ya sé quién está del otro lado</span>"],
-    "llave.pem": ["-----BEGIN ???-----", "esto no abre nada que conozcas todavía.", "-----END ???-----"],
-    ".no_abrir": ["te lo advertí."],
-  };
-
-  cmd.addEventListener("keydown", e => {
-    if (e.key !== "Enter") return;
-    const linea = cmd.value.trim();
-    cmd.value = "";
-    if (!linea) return;
-    agregar("dim", "› " + linea.replace(/</g, "&lt;"));
-
-    const [nombre, ...args] = linea.split(/\s+/);
-    let salida;
-    if (nombre === "cat") {
-      salida = archivos[args[0]] || [args[0] ? "cat: " + args[0].replace(/</g, "&lt;") + ": no existe (todavía)" : "cat: ¿qué archivo?"];
-    } else if (comandos[nombre]) {
-      salida = comandos[nombre]();
-    } else {
-      salida = ["comando desconocido: " + nombre.replace(/</g, "&lt;")];
-    }
-    salida.forEach(s => agregar("", s));
-    term.scrollTop = term.scrollHeight;
-  });
-
-  term.addEventListener("click", () => { if (!filaPrompt.hidden) cmd.focus(); });
-
-  /* ---------- entrada ---------- */
-  let iniciado = false;
-  entrada.addEventListener("click", async () => {
-    if (iniciado) return;
-    iniciado = true;
-    entrada.classList.add("fuera");
-    await sleep(900);
-    for (const [clase, texto] of guion) {
-      if (texto) await tipear(clase, texto); else agregar("", "&nbsp;");
-      await sleep(texto ? 350 : 120);
-    }
-    filaPrompt.hidden = false;
-    cmd.focus();
-  });
-
-  /* glitch esporádico en el título de entrada */
-  if (!reducir) {
-    const t = document.getElementById("titulo");
-    setInterval(() => {
-      if (iniciado || Math.random() > 0.4) return;
-      t.classList.remove("glitch");
-      void t.offsetWidth;
-      t.classList.add("glitch");
-    }, 2500);
-  }
-</script>
+  <div class="prompt"><span class="usr">invitado@cla.ar</span>:<span class="dir">~</span>$ <span class="cursor"></span></div>
+</main>
 
 </body>
 </html>
