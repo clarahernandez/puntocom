@@ -9,95 +9,101 @@
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
 
 <style>
-  :root {
-    --fg: #d3d7cf;
-    --dim: #6b7570;
-    --verde: #8ae234;
-    --azul: #729fcf;
-    font-family: "Ubuntu Mono", "DejaVu Sans Mono", Consolas, monospace;
-  }
-
-  * { box-sizing: border-box; }
-
   html, body {
     margin: 0;
-    height: 100%;
-    background: #050805;
-    color: var(--fg);
+    min-height: 100%;
+    background: #0a0a0a;
+    color: #8a8a8a;
+    font: 16px/1.7 "Ubuntu Mono", Consolas, monospace;
   }
 
   main {
-    position: relative;
-    z-index: 1;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 24px;
-    max-width: 760px;
+    max-width: 520px;
     margin: 0 auto;
-    font-size: 20px;
-    line-height: 1.6;
+    padding: 18vh 24px 48px;
   }
-
-  .prompt .usr { color: var(--verde); font-weight: 700; }
-  .prompt .dir { color: var(--azul); font-weight: 700; }
 
   h1 {
-    margin: 4px 0 20px;
-    font-size: clamp(40px, 10vw, 84px);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    line-height: 1;
+    margin: 0 0 12vh;
+    font-size: 16px;
+    font-weight: 400;
+    color: #e5e5e5;
   }
 
-  .botones { display: flex; flex-wrap: wrap; gap: 12px; margin: 4px 0 20px; }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-  a.boton {
-    color: var(--verde);
-    border: 1px solid var(--verde);
-    padding: 4px 14px;
+  li {
+    display: flex;
+    gap: 24px;
+    padding: 6px 0;
+    opacity: 0;
+    animation: aparecer 2.4s ease forwards;
+    animation-delay: calc(var(--i, 0) * 0.6s + 0.4s);
+  }
+
+  .n { color: #3d3d3d; }
+
+  li p {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+  }
+  li p a.ext {
+    color: #555;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  li p a.ext:hover, li p a.ext:focus-visible {
+    color: #b5b5b5;
+    border-color: #555;
+  }
+
+  a {
+    color: #b5b5b5;
     text-decoration: none;
-    transition: background 0.15s, color 0.15s;
+    transition: color 0.3s;
   }
-  a.boton:hover, a.boton:focus-visible {
-    background: var(--verde);
-    color: #050805;
+  a:hover, a:focus-visible {
+    color: #fff;
     outline: none;
   }
 
-  .cursor {
-    display: inline-block;
-    width: 0.6em;
-    height: 1.1em;
-    background: var(--fg);
-    vertical-align: text-bottom;
-    animation: parpadeo 1.1s steps(1) infinite;
+  footer {
+    margin-top: 16vh;
+    font-size: 14px;
   }
-  @keyframes parpadeo { 50% { opacity: 0; } }
+  footer a { color: #3d3d3d; }
+
+  @keyframes aparecer { to { opacity: 1; } }
 
   @media (prefers-reduced-motion: reduce) {
-    .cursor { animation: none; }
+    li { animation: none; opacity: 1; }
   }
 </style>
 </head>
 
 <body>
-
 <main>
-  <div class="prompt"><span class="usr">invitado@cla.ar</span>:<span class="dir">~</span>$ whoami</div>
-  <h1>CLA.AR</h1>
+  <h1>cla.ar</h1>
 
-  <div class="prompt"><span class="usr">invitado@cla.ar</span>:<span class="dir">~</span>$ ./contacto</div>
-  <div class="botones">
-    <a class="boton" href="mailto:hola@cla.ar">hola@cla.ar</a>
-  </div>
+  <ol>
+    <li style="--i:0">
+      <span class="n">001</span>
+      <div>
+        <a href="un-poco-de-rio/">un poco de río</a>
+        <p>Trabajo presentado en el domo del planetario para el Festival Experimental XV — desarrollado durante el <a class="ext" href="https://www.instagram.com/proyecto_espaciolab/" target="_blank" rel="noopener">Proyecto Espaciolab 2026</a></p>
+      </div>
+    </li>
+  </ol>
 
-  <div class="prompt"><span class="usr">invitado@cla.ar</span>:<span class="dir">~</span>$ <span class="cursor"></span></div>
+  <footer><a href="mailto:hola@cla.ar">hola@cla.ar</a></footer>
 </main>
-
 </body>
 </html>
