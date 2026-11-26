@@ -98,6 +98,7 @@ function setup() {
   if (params.get('panel') === '0') togglePanel();
   // En el modo OBS la guía está fuera de lo que sale por OBS: se ve siempre
   if (DOMO && OBS) guiaKorgMostrar(true);
+  crearVolver();          // set.js: botón para volver a la entrada
   if (SET) iniciarSet();   // set.js: ?set=rioReal, rioMarron, sauces o puente (loop sin panel)
 }
 

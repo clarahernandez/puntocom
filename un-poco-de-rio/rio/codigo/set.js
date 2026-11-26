@@ -156,18 +156,33 @@ function setPantalla(def) {
     setTimeout(() => entrada.remove(), 1200);
   });
 
-  const volver = document.createElement('a');
-  volver.className = 'set-volver';
-  volver.href = '../';
-  volver.textContent = '← volver';
-  document.body.appendChild(volver);
-  // El mouse y la flecha para volver aparecen solo al moverlo
+  // El mouse aparece solo al moverlo
   let quieto;
   window.addEventListener('pointermove', () => {
     document.body.classList.add('set-mueve');
     clearTimeout(quieto);
     quieto = setTimeout(() => document.body.classList.remove('set-mueve'), 2000);
   });
+}
+
+// El botón para volver a la entrada de un poco de río: siempre a la vista, abajo a la derecha
+// (en los sets y en "probá vos"). Lo llama setup() (sketch.js).
+function crearVolver() {
+  const volver = document.createElement('a');
+  volver.className = 'boton-volver';
+  volver.href = '../';
+  volver.textContent = '← volver';
+  document.body.appendChild(volver);
+  const estilo = document.createElement('style');
+  estilo.textContent = `
+    .boton-volver { position: fixed; right: 16px; bottom: 14px; z-index: 30;
+      padding: 6px 12px; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 4px;
+      background: rgba(0, 0, 0, 0.55); color: #b5b5b5; text-decoration: none;
+      font: 14px "Ubuntu Mono", Consolas, monospace; transition: color 0.3s, border-color 0.3s; }
+    .boton-volver:hover, .boton-volver:focus-visible { color: #fff; border-color: rgba(255, 255, 255, 0.5); outline: none; }
+    body.modo-set .boton-volver { cursor: pointer; }
+  `;
+  document.head.appendChild(estilo);
 }
 
 function setEstilos() {
@@ -183,11 +198,6 @@ function setEstilos() {
     .set-entrada b { display: block; font-weight: 400; }
     .set-entrada span { color: #737373; font-size: 14px; }
     .set-entrada.fuera { opacity: 0; pointer-events: none; }
-    .set-volver { position: fixed; left: 16px; top: 12px; z-index: 10; opacity: 0;
-      font: 14px "Ubuntu Mono", Consolas, monospace; color: #737373; text-decoration: none;
-      transition: opacity 0.6s, color 0.3s; }
-    .set-mueve .set-volver { opacity: 1; }
-    .set-volver:hover { color: #e5e5e5; }
   `;
   document.head.appendChild(estilo);
 }
