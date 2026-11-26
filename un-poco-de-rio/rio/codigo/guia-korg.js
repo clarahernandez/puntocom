@@ -14,8 +14,8 @@
 // CC de fábrica del nanoKONTROL2 (canal 1). En la guía, cada columna del Korg es un renglón:
 // fader | perilla | S | M | R
 const KORG_FILAS = [
-  { nombre: 'fader', cc: 0, continuo: true },
-  { nombre: 'perilla', cc: 16, continuo: true },
+  { nombre: 'fader ↑↓', cc: 0, continuo: true },
+  { nombre: 'perilla ←→', cc: 16, continuo: true },
   { nombre: 'S', cc: 32 },
   { nombre: 'M', cc: 48 },
   { nombre: 'R', cc: 64 },
@@ -199,8 +199,8 @@ function guiaKorgCrear() {
 
   // Vertical, para ocupar el alto de la pantalla al costado del domo: cada columna del Korg
   // es un renglón, con sus perilla, S, M, R y fader uno al lado del otro
-  let html = `<div class="gk-titulo">Korg nanoKONTROL2</div>
-    <div class="gk-modo">modo <b></b> <span>TRACK ◀ ▶ · CYCLE = escenas</span></div>
+  let html = `<div class="gk-titulo">teclado · 1–8 elige la columna · Shift + flecha = paso largo</div>
+    <div class="gk-modo">modo <b></b> <span>Tab ▶ · ⇧Tab ◀ · 0 = escenas</span></div>
     <div class="gk-korg"></div>
     <div class="gk-ref"><i class="sonido"></i>sonido <i></i>imagen <i class="verde"></i>prendido · K oculta · G panel</div>
     <div class="gk-grilla"><div></div>${KORG_FILAS.map((f) => `<div class="gk-col">${f.nombre}</div>`).join('')}`;
@@ -208,7 +208,8 @@ function guiaKorgCrear() {
     html += `<div class="gk-fila"><span>${i + 1}</span>${''}</div>`;
     for (const fila of KORG_FILAS) html += casilla(`0:${fila.cc + i}`, '', fila.continuo);
   }
-  html += `</div><div class="gk-transporte">${KORG_TRANSPORTE.map(([cc, n]) => casilla(`0:${cc}`, `<b>${n}</b>`)).join('')}</div>`;
+  const tecla = (cc) => (typeof TECLADO_NOMBRE_TRANSPORTE !== 'undefined' && TECLADO_NOMBRE_TRANSPORTE[cc]) || '';
+  html += `</div><div class="gk-transporte">${KORG_TRANSPORTE.map(([cc, n]) => casilla(`0:${cc}`, `<b><kbd>${tecla(cc)}</kbd> ${n}</b>`)).join('')}</div>`;
 
   const div = document.createElement('div');
   div.className = 'guia-korg';
@@ -218,6 +219,7 @@ function guiaKorgCrear() {
   guiaKorg.filas = [...div.querySelectorAll('.gk-fila')];
   for (const el of guiaKorg.filas) el.appendChild(document.createTextNode(''));
   guiaKorg.div = div;
+  guiaKorgColumna(typeof teclado !== 'undefined' ? teclado.columna : 0);
   guiaKorgMostrar(guiaKorg.visible);
   setInterval(guiaKorgRevisar, 200);
 }
@@ -238,6 +240,7 @@ function guiaKorgEncendido(id, c) {
 
 // El estado del Korg, arriba de la guía (para saber enseguida si anda)
 const KORG_ESTADOS = {
+  teclado: ['⌨ con el teclado (para el Korg, abrí con ?midi)', 'gris'],
   buscando: ['buscando el Korg…', 'gris'],
   listo: ['● Korg conectado', 'verde'],
   nada: ['● Korg no encontrado: enchufalo (directo, sin hub)', 'rojo'],
@@ -270,6 +273,16 @@ function guiaKorgRevisar() {
   for (const id of Object.values(midiMapa)) {
     const c = midiControles[id];
     if (c && guiaKorgEncendido(id, c)) c.domElement.classList.add('midi-encendido');
+  }
+}
+
+// Marca la columna que manejan las flechas y S M R (teclado.js)
+function guiaKorgColumna(i) {
+  if (!guiaKorg.div) return;
+  guiaKorg.filas.forEach((el, j) => el.classList.toggle('elegida', j === i));
+  for (const [clave, el] of Object.entries(guiaKorg.casillas)) {
+    const cc = +clave.split(':')[1];
+    el.classList.toggle('en-columna', cc < 80 && cc % 16 === i && !el.closest('.gk-transporte'));
   }
 }
 
@@ -326,6 +339,9 @@ function guiaKorgEstilos() {
     .gk-fila { align-self: center; font-size: 10px; font-weight: 600; text-transform: uppercase;
       letter-spacing: 0.03em; color: var(--modo); }
     .gk-fila span { display: block; font-size: 15px; color: #e8e2d6; }
+    .gk-fila.elegida span { color: #000; background: var(--modo); border-radius: 3px; text-align: center; width: 22px; }
+    .gk-casilla.en-columna { box-shadow: inset 0 0 0 1px var(--modo); }
+    .gk-transporte kbd { font: inherit; color: var(--modo); }
     .gk-casilla { position: relative; overflow: hidden; padding: 4px 4px;
       overflow-wrap: anywhere; hyphens: auto;   /* en franjas angostas parte las palabras con guion */
       border-radius: 4px; background: rgba(255, 159, 67, 0.16); transition: background 0.4s; }

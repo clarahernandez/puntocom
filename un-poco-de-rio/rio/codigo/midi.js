@@ -92,15 +92,22 @@ function iniciarMidi(gui) {
 
   const f = gui.addFolder('MIDI');
   f.add(midiUI, 'dispositivo').name('controlador').listen().disable();
-  f.add(midiUI, 'modo', Object.fromEntries(MIDI_MODOS.map((m) => [MIDI_NOMBRE_MODO[m], m]))).name('modo (TRACK ◀ ▶ en el Korg)').listen().onChange(midiPonerModo);
+  f.add(midiUI, 'modo', Object.fromEntries(MIDI_MODOS.map((m) => [MIDI_NOMBRE_MODO[m], m]))).name('modo (Tab en el teclado)').listen().onChange(midiPonerModo);
   if (CONFIG.midiSuavidad === undefined) CONFIG.midiSuavidad = 0.4;
   f.add(CONFIG, 'midiSuavidad', 0, 3, 0.05).name('suavidad de perillas y faders (s)');
-  f.add(midiUI, 'aprender').name('aprender (clic en un control y mové el tuyo)')
+  f.add(midiUI, 'aprender').name('aprender (clic en un control y apretá una tecla)')
     .onChange((v) => { if (!v) midiElegir(null); });
   f.add(midiUI, 'seleccion').name('esperando para').listen().disable();
   f.add({ borrar: midiBorrarSeleccion }, 'borrar').name('borrar asignación del elegido');
   f.add({ todo: midiBorrarTodo }, 'todo').name('borrar todas las de este modo');
 
+  // El Korg es opcional: se maneja con el teclado (teclado.js). Solo con ?midi en la dirección se
+  // busca un controlador MIDI (así Chrome no pide permiso a quien entra a ver la obra)
+  if (!new URLSearchParams(location.search).has('midi')) {
+    midiUI.dispositivo = 'teclado (?midi para usar el Korg)';
+    midiEstado.como = 'teclado';
+    return;
+  }
   if (!navigator.requestMIDIAccess) {
     midiUI.dispositivo = 'este navegador no tiene MIDI (usá Chrome)';
     midiEstado.como = 'permiso';
@@ -155,7 +162,13 @@ function midiMensaje(e) {
   const clave = `0:${cc}`;
   midiEstado.ultimo = performance.now();
   if (midiEstado.como !== 'listo') midiEstado.como = 'listo';
+  midiControl(clave, valor);
+}
 
+// Lo que hace un control del Korg (o la tecla que lo reemplaza, teclado.js). valor: 0 a 127.
+// Desde el teclado, las perillas y faders se mueven desde donde está el control: no hay que engancharlos.
+function midiControl(clave, valor, desdeTeclado = false) {
+  const cc = clave.split(':')[1];
   if (clave in MIDI_CAMBIO_MODO || clave in MIDI_IR_A) {
     if (valor >= 64) {
       if (clave in MIDI_IR_A) midiPonerModo(MIDI_IR_A[clave]);
@@ -170,7 +183,8 @@ function midiMensaje(e) {
       if (midiMapa[k] === midiId(midiSeleccion)) delete midiMapa[k];
     }
     midiMapa[clave] = midiId(midiSeleccion);
-    aviso(`${midiSeleccion.$name.textContent} ← CC ${cc} (modo ${MIDI_NOMBRE_MODO[midiModo]})`);
+    const nombre = desdeTeclado && typeof tecladoNombre === 'function' ? tecladoNombre(clave) : `CC ${cc}`;
+    aviso(`${midiSeleccion.$name.textContent} ← ${nombre} (modo ${MIDI_NOMBRE_MODO[midiModo]})`);
     midiGuardar();
     midiElegir(null);
     guiaKorgDestello(clave, valor, true);
@@ -186,7 +200,7 @@ function midiMensaje(e) {
   } else if (c instanceof lil.BooleanController) {
     if (valor >= 64) c.setValue(!c.getValue());   // cada apretada prende o apaga
   } else {
-    enganchado = midiMover(c, clave, valor / 127);
+    enganchado = midiMover(c, clave, valor / 127, desdeTeclado);
   }
   guiaKorgDestello(clave, valor, enganchado);
 }
@@ -216,11 +230,12 @@ function midiSuavizar(ahora) {
 requestAnimationFrame(midiSuavizar);
 
 // Mueve un control con una perilla o un fader, si está enganchado (ver arriba)
-function midiMover(c, clave, v) {
+function midiMover(c, clave, v, forzar = false) {
   const rango = c._max - c._min;
   const actual = (c.getValue() - c._min) / rango;
   const antes = midiFisico[clave];
   midiFisico[clave] = v;
+  if (forzar) { midiEnganche[clave] = true; midiPuesto[clave] = actual; }
   // Si el control cambió por otro lado (el mouse, una transición), hay que volver a engancharlo
   if (midiEnganche[clave] && Math.abs(actual - midiPuesto[clave]) > 0.02) midiEnganche[clave] = false;
   if (!midiEnganche[clave]) {
