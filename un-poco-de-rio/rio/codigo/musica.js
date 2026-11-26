@@ -15,7 +15,7 @@
 
 const MUSICA_DEFECTO = {
   espacio: 0.35,
-  colchon: { activo: false, volumen: 0.5, brillo: 0.35 },
+  colchon: { activo: true, volumen: 0.5, brillo: 0.35 },
   gotas: { activo: false, volumen: 0.6, cantidad: 0.4 },
   pulso: { activo: false, volumen: 0.7, cola: 0.35 },
   agua: { filtro: 1 },
@@ -64,8 +64,10 @@ function iniciarMusica() {
   for (const [k, v] of Object.entries(MUSICA_DEFECTO)) {
     CONFIG.musica[k] = typeof v === 'object' ? Object.assign({}, v, CONFIG.musica[k]) : (CONFIG.musica[k] ?? v);
   }
-  // Al abrir, todo lo electrónico arranca apagado (aunque se haya copiado prendido)
-  for (const k of ['colchon', 'gotas', 'pulso', 'congelar']) CONFIG.musica[k].activo = false;
+  // Al abrir, el colchón arranca siempre prendido y el resto de lo electrónico apagado
+  // (aunque se haya copiado de otra forma)
+  for (const k of ['gotas', 'pulso', 'congelar']) CONFIG.musica[k].activo = false;
+  CONFIG.musica.colchon.activo = true;
 
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC || new URLSearchParams(location.search).has('silencio')) {
