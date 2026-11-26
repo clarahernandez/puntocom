@@ -28,10 +28,10 @@ const teclado = { columna: 0 };
 
 function tecladoNombre(clave) {
   const cc = +clave.split(':')[1];
-  if (TECLADO_NOMBRE_TRANSPORTE[cc]) return 'tecla ' + TECLADO_NOMBRE_TRANSPORTE[cc];
+  if (TECLADO_NOMBRE_TRANSPORTE[cc]) return TECLADO_NOMBRE_TRANSPORTE[cc];
   const col = (cc % 16) + 1;
   const tipo = cc < 16 ? '↑↓' : cc < 32 ? '←→' : cc < 48 ? 'S' : cc < 64 ? 'M' : 'R';
-  return `${tipo} columna ${col}`;
+  return `${col} + ${tipo}`;
 }
 
 function tecladoElegirColumna(i) {

@@ -14,8 +14,8 @@
 // CC de fábrica del nanoKONTROL2 (canal 1). En la guía, cada columna del Korg es un renglón:
 // fader | perilla | S | M | R
 const KORG_FILAS = [
-  { nombre: 'fader ↑↓', cc: 0, continuo: true },
-  { nombre: 'perilla ←→', cc: 16, continuo: true },
+  { nombre: '↑ ↓', cc: 0, continuo: true },
+  { nombre: '← →', cc: 16, continuo: true },
   { nombre: 'S', cc: 32 },
   { nombre: 'M', cc: 48 },
   { nombre: 'R', cc: 64 },
@@ -199,17 +199,17 @@ function guiaKorgCrear() {
 
   // Vertical, para ocupar el alto de la pantalla al costado del domo: cada columna del Korg
   // es un renglón, con sus perilla, S, M, R y fader uno al lado del otro
-  let html = `<div class="gk-titulo">teclado · 1–8 elige la columna · Shift + flecha = paso largo</div>
+  let html = `<div class="gk-titulo">teclado</div>
     <div class="gk-modo">modo <b></b> <span>Tab ▶ · ⇧Tab ◀ · 0 = escenas</span></div>
-    <div class="gk-korg"></div>
-    <div class="gk-ref"><i class="sonido"></i>sonido <i></i>imagen <i class="verde"></i>prendido · K oculta · G panel</div>
+    <div class="gk-ayuda"><kbd>1</kbd>–<kbd>8</kbd> elegí la fila · <kbd>↑</kbd><kbd>↓</kbd> <kbd>←</kbd><kbd>→</kbd> mueven (con Shift, más rápido) · <kbd>S</kbd> <kbd>M</kbd> <kbd>R</kbd> botones</div>
+    <div class="gk-ref"><i class="sonido"></i>sonido <i></i>imagen <i class="verde"></i>prendido · K oculta esta guía · G panel</div>
     <div class="gk-grilla"><div></div>${KORG_FILAS.map((f) => `<div class="gk-col">${f.nombre}</div>`).join('')}`;
   for (let i = 0; i < 8; i++) {
     html += `<div class="gk-fila"><span>${i + 1}</span>${''}</div>`;
     for (const fila of KORG_FILAS) html += casilla(`0:${fila.cc + i}`, '', fila.continuo);
   }
   const tecla = (cc) => (typeof TECLADO_NOMBRE_TRANSPORTE !== 'undefined' && TECLADO_NOMBRE_TRANSPORTE[cc]) || '';
-  html += `</div><div class="gk-transporte">${KORG_TRANSPORTE.map(([cc, n]) => casilla(`0:${cc}`, `<b><kbd>${tecla(cc)}</kbd> ${n}</b>`)).join('')}</div>`;
+  html += `</div><div class="gk-transporte">${KORG_TRANSPORTE.map(([cc, n]) => casilla(`0:${cc}`, `<b><kbd>${tecla(cc)}</kbd></b>`)).join('')}</div>`;
 
   const div = document.createElement('div');
   div.className = 'guia-korg';
@@ -238,27 +238,8 @@ function guiaKorgEncendido(id, c) {
   return false;
 }
 
-// El estado del Korg, arriba de la guía (para saber enseguida si anda)
-const KORG_ESTADOS = {
-  teclado: ['⌨ con el teclado (para el Korg, abrí con ?midi)', 'gris'],
-  buscando: ['buscando el Korg…', 'gris'],
-  listo: ['● Korg conectado', 'verde'],
-  nada: ['● Korg no encontrado: enchufalo (directo, sin hub)', 'rojo'],
-  ocupado: ['● Korg ocupado por otro programa: cerrá OBS-navegador, otras ventanas de la obra o programas de música, y volvé a abrir', 'rojo'],
-  permiso: ['● Chrome no dejó usar el Korg (permiso MIDI): abrí con abrir-para-obs.bat y aceptá', 'rojo'],
-};
-
-function guiaKorgEstado() {
-  const el = guiaKorg.div && guiaKorg.div.querySelector('.gk-korg');
-  if (!el || typeof midiEstado === 'undefined') return;
-  const [texto, color] = KORG_ESTADOS[midiEstado.como] || KORG_ESTADOS.buscando;
-  el.textContent = texto + (midiEstado.como === 'listo' && midiEstado.nombre ? ' (' + midiEstado.nombre + ')' : '');
-  el.className = 'gk-korg ' + color + (performance.now() - midiEstado.ultimo < 250 ? ' recibe' : '');
-}
-
 // Cinco veces por segundo: resalta lo prendido y pone las rayitas en el valor de cada control
 function guiaKorgRevisar() {
-  guiaKorgEstado();
   for (const [clave, el] of Object.entries(guiaKorg.casillas)) {
     const id = midiMapa[clave];
     const c = id && midiControles[id];
@@ -341,7 +322,10 @@ function guiaKorgEstilos() {
     .gk-fila span { display: block; font-size: 15px; color: #e8e2d6; }
     .gk-fila.elegida span { color: #000; background: var(--modo); border-radius: 3px; text-align: center; width: 22px; }
     .gk-casilla.en-columna { box-shadow: inset 0 0 0 1px var(--modo); }
-    .gk-transporte kbd { font: inherit; color: var(--modo); }
+    .gk-transporte kbd { font: inherit; font-size: 11px; color: var(--modo); }
+    .gk-ayuda { font-size: 11px; color: #c9c2b4; margin-top: 6px; line-height: 1.6; }
+    .gk-ayuda kbd { font: 600 10px system-ui, sans-serif; padding: 0 4px; border: 1px solid #5a5650;
+      border-radius: 3px; color: #e8e2d6; }
     .gk-casilla { position: relative; overflow: hidden; padding: 4px 4px;
       overflow-wrap: anywhere; hyphens: auto;   /* en franjas angostas parte las palabras con guion */
       border-radius: 4px; background: rgba(255, 159, 67, 0.16); transition: background 0.4s; }

@@ -116,6 +116,7 @@ function crearPanel() {
   sonidoPanel(panel);
   musicaPanel(panel);
   iniciarMidi(panel);
+  panel.hide();   // arranca escondido: G lo muestra
 }
 
 // Realce (0 a 1): en 0 la imagen queda como sale; en 1, +60 % de brillo y +80 % de contraste.
@@ -145,8 +146,6 @@ function aplicarRealce() {
 
 function togglePanel() {
   panel.show(panel._hidden);
-  // La guía del Korg va y viene con el panel; en el modo OBS no (está fuera de lo que sale por OBS)
-  if (!(DOMO && OBS)) guiaKorgMostrar(!panel._hidden);
 }
 
 // El mouse no se ve sobre la imagen: en el domo, solo dentro del círculo; en lo negro de

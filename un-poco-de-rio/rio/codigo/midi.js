@@ -90,33 +90,19 @@ function iniciarMidi(gui) {
   midiMudar();
   midiPonerModo('escenas');
 
-  const f = gui.addFolder('MIDI');
-  f.add(midiUI, 'dispositivo').name('controlador').listen().disable();
+  const f = gui.addFolder('Teclado');
   f.add(midiUI, 'modo', Object.fromEntries(MIDI_MODOS.map((m) => [MIDI_NOMBRE_MODO[m], m]))).name('modo (Tab en el teclado)').listen().onChange(midiPonerModo);
   if (CONFIG.midiSuavidad === undefined) CONFIG.midiSuavidad = 0.4;
-  f.add(CONFIG, 'midiSuavidad', 0, 3, 0.05).name('suavidad de perillas y faders (s)');
+  f.add(CONFIG, 'midiSuavidad', 0, 3, 0.05).name('suavidad de las flechas (s)');
   f.add(midiUI, 'aprender').name('aprender (clic en un control y apretá una tecla)')
     .onChange((v) => { if (!v) midiElegir(null); });
   f.add(midiUI, 'seleccion').name('esperando para').listen().disable();
   f.add({ borrar: midiBorrarSeleccion }, 'borrar').name('borrar asignación del elegido');
   f.add({ todo: midiBorrarTodo }, 'todo').name('borrar todas las de este modo');
 
-  // El Korg es opcional: se maneja con el teclado (teclado.js). Solo con ?midi en la dirección se
-  // busca un controlador MIDI (así Chrome no pide permiso a quien entra a ver la obra)
-  if (!new URLSearchParams(location.search).has('midi')) {
-    midiUI.dispositivo = 'teclado (?midi para usar el Korg)';
-    midiEstado.como = 'teclado';
-    return;
-  }
-  if (!navigator.requestMIDIAccess) {
-    midiUI.dispositivo = 'este navegador no tiene MIDI (usá Chrome)';
-    midiEstado.como = 'permiso';
-    return;
-  }
-  navigator.requestMIDIAccess().then(midiConectar, () => {
-    midiUI.dispositivo = 'permiso MIDI denegado';
-    midiEstado.como = 'permiso';
-  });
+  // Se maneja solo con el teclado (teclado.js): no se busca ningún controlador MIDI,
+  // así el navegador no pide permisos
+  midiEstado.como = 'teclado';
 }
 
 function midiConectar(acceso) {
@@ -183,7 +169,7 @@ function midiControl(clave, valor, desdeTeclado = false) {
       if (midiMapa[k] === midiId(midiSeleccion)) delete midiMapa[k];
     }
     midiMapa[clave] = midiId(midiSeleccion);
-    const nombre = desdeTeclado && typeof tecladoNombre === 'function' ? tecladoNombre(clave) : `CC ${cc}`;
+    const nombre = tecladoNombre(clave);
     aviso(`${midiSeleccion.$name.textContent} ← ${nombre} (modo ${MIDI_NOMBRE_MODO[midiModo]})`);
     midiGuardar();
     midiElegir(null);
@@ -339,7 +325,7 @@ function midiMudar() {
 function midiMarcar() {
   for (const c of Object.values(midiControles)) delete c.domElement.dataset.cc;
   for (const [clave, id] of Object.entries(midiMapa)) {
-    if (midiControles[id]) midiControles[id].domElement.dataset.cc = 'CC ' + clave.split(':')[1];
+    if (midiControles[id]) midiControles[id].domElement.dataset.cc = tecladoNombre(clave);
   }
   for (const f of midiPanel.foldersRecursive()) {
     const hay = f.controllersRecursive().some((c) => c.domElement.dataset.cc);
