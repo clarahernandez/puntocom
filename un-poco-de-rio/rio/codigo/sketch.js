@@ -98,11 +98,13 @@ function setup() {
   if (params.get('panel') === '0') togglePanel();
   // En el modo OBS la guía está fuera de lo que sale por OBS: se ve siempre
   if (DOMO && OBS) guiaKorgMostrar(true);
+  if (SET) iniciarSet();   // set.js: ?set=rioReal, rioMarron, sauces o puente (loop sin panel)
 }
 
 function draw() {
   // Segundos desde el cuadro anterior (con tope, por si la pestaña estuvo quieta)
   const dt = Math.min(deltaTime, 100) / 1000;
+  if (SET) actualizarSet(dt);   // set.js: lo que pasa en la vuelta
   avanzarRelojes(dt);   // tiempo.js: con tormenta el día se detiene, las olas no
 
   // Cómo está el día: la luz, el sol y la luna (cielo.js)
@@ -152,6 +154,7 @@ function apagarEnLaPausa(m) {
 // ---------- Eventos ----------
 
 function keyPressed() {
+  if (SET) return;   // en los sets no se toca nada
   if (key === 'g' || key === 'G') togglePanel();
   if (key === 'f' || key === 'F') fullscreen(!fullscreen());
   if (key === 'k' || key === 'K') guiaKorgMostrar(!guiaKorg.visible);   // guía del Korg

@@ -1,12 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>un poco de río</title>
-  <meta http-equiv="refresh" content="0; url=rio/">
-  <style>body { background: #000; color: #f3e6d3; font: 16px system-ui, sans-serif; padding: 24px; }
-    a { color: inherit; }</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>un poco de río</title>
+<link rel="icon" href="../images/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
+
+<style>
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: #0a0a0a;
+    color: #8a8a8a;
+    font: 16px/1.7 "Ubuntu Mono", Consolas, monospace;
+  }
+
+  main {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 12vh 24px 48px;
+  }
+
+  .volver {
+    font-size: 14px;
+    color: #3d3d3d;
+  }
+
+  h1 {
+    margin: 8vh 0 4px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #e5e5e5;
+  }
+
+  .desc {
+    margin: 0 0 10vh;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+  }
+
+  h2 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #3d3d3d;
+  }
+
+  ol {
+    list-style: none;
+    margin: 0 0 8vh;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    gap: 24px;
+    padding: 6px 0;
+    opacity: 0;
+    animation: aparecer 2.4s ease forwards;
+    animation-delay: calc(var(--i, 0) * 0.5s + 0.3s);
+  }
+
+  .n { color: #3d3d3d; }
+
+  li p {
+    margin: 2px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+  }
+
+  a {
+    color: #b5b5b5;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  a:hover, a:focus-visible {
+    color: #fff;
+    outline: none;
+  }
+  .desc a, .volver {
+    color: #555;
+  }
+  .desc a { border-bottom: 1px solid #2a2a2a; }
+  .desc a:hover, .volver:hover { color: #b5b5b5; }
+
+  /* "probá vos" se maneja con el teclado: en celulares y tablets queda apagado */
+  .solo-compu { display: none; }
+  @media (hover: none), (pointer: coarse) {
+    .proba a { pointer-events: none; color: #3d3d3d; }
+    .solo-compu { display: block; }
+  }
+
+  @keyframes aparecer { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    li { animation: none; opacity: 1; }
+  }
+</style>
 </head>
-<body><a href="rio/">un poco de río</a></body>
+
+<body>
+<main>
+  <a class="volver" href="../">← cla.ar</a>
+
+  <h1>un poco de río</h1>
+  <p class="desc">Trabajo presentado en el domo del planetario para el Festival Experimental XV — desarrollado durante el <a href="https://www.instagram.com/proyecto_espaciolab/" target="_blank" rel="noopener">Proyecto Espaciolab 2026</a></p>
+
+  <h2>sets en loop</h2>
+  <ol>
+    <li style="--i:0"><span class="n">01</span><div><a href="rio/?set=rioReal">el río</a><p>la playa, el agua que va y viene, garzas y kayaks</p></div></li>
+    <li style="--i:1"><span class="n">02</span><div><a href="rio/?set=rioMarron">el río por dentro</a><p>la luz dentro del agua marrón</p></div></li>
+    <li style="--i:2"><span class="n">03</span><div><a href="rio/?set=sauces">los sauces</a><p>debajo de los sauces, los pájaros conversan</p></div></li>
+    <li style="--i:3"><span class="n">04</span><div><a href="rio/?set=puente">el puente</a><p>cruzar de noche</p></div></li>
+  </ol>
+
+  <ol>
+    <li class="proba" style="--i:4"><span class="n">··</span><div><a href="rio/">probá vos</a><p>tocá la obra con el teclado</p><p class="solo-compu">(solo desde la computadora)</p></div></li>
+  </ol>
+</main>
+</body>
 </html>

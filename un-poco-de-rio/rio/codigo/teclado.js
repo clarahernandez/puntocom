@@ -61,6 +61,7 @@ window.addEventListener('keydown', (e) => {
   if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (typeof midiMapa === 'undefined' || !midiPanel) return;   // el panel todavía no arrancó
+  if (typeof SET !== 'undefined' && SET) return;              // en los sets (set.js) no se toca nada
 
   const k = e.key.toLowerCase();
   const col = teclado.columna;
