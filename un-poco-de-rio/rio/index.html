@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>un poco de río</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+    canvas { display: block; }
+    /* Domo: el lienzo es de 2048 × 2048; en pantalla se achica para entrar entero */
+    body.domo { display: flex; align-items: center; justify-content: center; height: 100vh; }
+    body.domo canvas { width: min(100vw, 100vh) !important; height: min(100vw, 100vh) !important; }
+    /* Modo OBS (?obs): 2048 × 2048 píxeles reales, arriba a la izquierda (sketch.js, ajustarModoObs) */
+    body.domo.obs { display: block; }
+    body.domo.obs canvas { position: fixed; left: 0; top: 0;
+      width: var(--lado-obs) !important; height: var(--lado-obs) !important; }
+    /* La guía y el panel, en la franja de la pantalla a la derecha del domo (OBS no la saca) */
+    body.obs .guia-korg { left: calc(var(--lado-obs) + 8px) !important; top: 8px !important;
+      width: calc(var(--ancho-visible) - var(--lado-obs) - 16px) !important;
+      height: calc(var(--alto-visible) - 16px) !important; }
+    body.obs .lil-gui.root { right: auto !important; left: calc(var(--lado-obs) + 8px) !important;
+      top: 8px !important; max-height: calc(var(--alto-visible) - 16px); z-index: 7;
+      width: calc(var(--ancho-visible) - var(--lado-obs) - 16px) !important; }
+    body.obs .aviso { left: calc(var(--lado-obs) + 8px); bottom: auto;
+      top: calc(var(--alto-visible) - 60px); }
+    /* Los avisos van abajo a la izquierda, en lo negro: en el medio se verían en el domo */
+    .aviso {
+      position: fixed; left: 12px; bottom: 12px; max-width: 360px; z-index: 6;
+      background: rgba(0, 0, 0, 0.75); color: #f3e6d3; padding: 8px 14px;
+      font: 14px system-ui, sans-serif; border-radius: 6px;
+    }
+  </style>
+  <!-- Librerías guardadas en lib/, así anda sin internet (p5.js 1.9.4 y lil-gui 0.19.2) -->
+  <script src="lib/p5.min.js"></script>
+  <script src="lib/lil-gui.umd.min.js"></script>
+  <!-- Ajustes de la obra y qué sonidos suenan: los dos archivos que se tocan a mano -->
+  <script src="config.js"></script>
+  <script src="capas-sonido.js"></script>
+
+  <!-- El dibujo (shader), en partes que se pegan en este orden -->
+  <script src="codigo/shaders/comun.js"></script>
+  <script src="codigo/shaders/causticas.js"></script>
+  <script src="codigo/shaders/playa.js"></script>
+  <script src="codigo/shaders/principal.js"></script>
+
+  <!-- El resto del código -->
+  <script src="codigo/util.js"></script>
+  <script src="codigo/tiempo.js"></script>
+  <script src="codigo/cielo.js"></script>
+  <script src="codigo/oleaje.js"></script>
+  <script src="codigo/agua.js"></script>
+  <script src="codigo/gotas.js"></script>
+  <script src="../sonidos/sonido.js"></script>
+  <script src="codigo/rayo.js"></script>
+  <script src="codigo/tormenta.js"></script>
+  <script src="codigo/garzas.js"></script>
+  <script src="codigo/kayaks.js"></script>
+  <script src="codigo/camalotes.js"></script>
+
+  <!-- Las capas: capas.js primero (las registra y las compone), después una por visual,
+       de abajo hacia arriba -->
+  <script src="codigo/capas.js"></script>
+  <script src="codigo/capa-rio-real.js"></script>
+  <script src="codigo/capa-rio-marron.js"></script>
+  <script src="codigo/capa-flotantes.js"></script>
+  <script src="codigo/capa-sauces.js"></script>
+  <script src="codigo/capa-puente.js"></script>
+  <script src="codigo/capa-tormenta.js"></script>
+
+  <script src="codigo/musica.js"></script>
+  <script src="codigo/midi.js"></script>
+  <script src="codigo/guia-korg.js"></script>
+  <script src="codigo/panel.js"></script>
+  <script src="codigo/sketch.js"></script>
+</head>
+<body></body>
+</html>
